@@ -74,6 +74,24 @@ describe("migrations apply to Postgres", () => {
     });
   }
 
+  test("every public table has row-level security enabled", async () => {
+    // Supabase publishes `public` through PostgREST with a key that is public by
+    // design, so a table without RLS is a table on the internet. The app is
+    // unaffected — it connects as the owner, which bypasses RLS. See
+    // migrations/0008_rls.sql.
+    const { rows } = await pg.query(
+      `select tablename from pg_tables
+        where schemaname = 'public' and rowsecurity = false
+        order by tablename`,
+    );
+    assert.deepEqual(
+      rows.map((r) => r.tablename),
+      [],
+      "these tables would be readable and writable with the Supabase anon key — " +
+        "add `alter table <name> enable row level security;` to the migration that creates them",
+    );
+  });
+
   test("clearing a seeded deal takes its workstreams with it", async () => {
     await pg.exec(`
       insert into houses (id, name, invite_code, created_by)
