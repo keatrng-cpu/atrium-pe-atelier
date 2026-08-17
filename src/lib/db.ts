@@ -132,6 +132,11 @@ async function createPgliteSql(): Promise<Sql> {
   // files are tracked in _migrations. Runs once per module instance — so an HMR
   // reload after adding a migration file applies it live — with passes
   // serialized on a global chain so concurrent callers never double-apply.
+  //
+  // Vite only re-inlines the glob when THIS module changes. If you add a
+  // migrations/*.sql file, bump the set below so preview actually applies it.
+  // Current set: 0001_auth, 0002_atelier, 0003_work, 0004_member_profile,
+  // 0005_house, 0006_research, 0007_scope, 0008_rls.
   const migrate = async (): Promise<void> => {
     const migrations = import.meta.glob("/migrations/*.sql", {
       query: "?raw",
