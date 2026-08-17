@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { HouseShell, HouseSkeleton } from "@/components/house/house-shell";
+import { DemoTag, HouseShell, HouseSkeleton } from "@/components/house/house-shell";
 import { useHouse } from "@/components/house/use-house";
 import { PageIntro, PageShell } from "@/components/page-shell";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RedirectToSignIn } from "@/lib/auth/gates";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
-import { createHouse, joinHouse, leaveHouse } from "@/lib/server/house";
+import { clearDemoBook, createHouse, joinHouse, leaveHouse } from "@/lib/server/house";
 import { loadProfile } from "@/lib/server/profile";
 import { dealStages, houseFunctions, houseSeats, labelOf } from "@/data/house";
 import { cn } from "@/lib/utils";
@@ -20,6 +20,7 @@ export const Route = createFileRoute("/house")({ component: HousePage });
 function HousePage() {
   const { user, isPending } = useCurrentUserState();
   const { bundle, ready, refresh } = useHouse();
+  const [clearing, setClearing] = useState(false);
 
   if (isPending || (user && !ready)) return <HouseSkeleton />;
   if (!user) return <RedirectToSignIn />;
@@ -28,6 +29,11 @@ function HousePage() {
   const live = bundle.deals.filter((d) => !["closed", "passed"].includes(d.stage));
   const openAlerts = bundle.alerts.filter((a) => !a.readAt);
   const rooms = bundle.meetings.filter((m) => m.status !== "adjourned");
+  const demoRows =
+    bundle.deals.filter((d) => d.seeded).length +
+    bundle.meetings.filter((m) => m.seeded).length +
+    bundle.alerts.filter((a) => a.seeded).length +
+    bundle.portfolio.filter((c) => c.seeded).length;
   const present = bundle.members.filter((m) => {
     if (!m.lastSeen) return false;
     return Date.now() - new Date(m.lastSeen).getTime() < 5 * 60 * 1000;
@@ -41,6 +47,43 @@ function HousePage() {
         <Stat label="Rooms" value={String(rooms.length)} />
         <Stat label="On the floor" value={String(present.length || 1)} />
       </div>
+
+      {demoRows > 0 ? (
+        <section className="mt-8 rounded-2xl bg-surface p-6 shadow-[var(--shadow-border)]">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="max-w-xl">
+              <p className="text-[10px] uppercase tracking-[0.16em] text-accent">Demo book</p>
+              <p className="mt-2 text-sm text-fg">
+                This house opened with {demoRows} demo {demoRows === 1 ? "record" : "records"} so the
+                room was not empty. They are marked <span className="text-subtle">Demo</span> wherever
+                they appear.
+              </p>
+              <p className="mt-2 text-sm text-muted">
+                Clearing removes every demo process, room, watch, and holding — along with anything
+                filed against them, including workstreams and floor notes you added yourself. Your
+                own processes and holdings are untouched.
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={clearing}
+              onClick={() => {
+                setClearing(true);
+                void clearDemoBook()
+                  .then(() => refresh())
+                  .then(() => toast.success("The demo book is cleared."))
+                  .catch((err) =>
+                    toast.error(err instanceof Error ? err.message : "Could not clear the book"),
+                  )
+                  .finally(() => setClearing(false));
+              }}
+            >
+              {clearing ? "Clearing…" : "Clear the demo book"}
+            </Button>
+          </div>
+        </section>
+      ) : null}
 
       {bundle.house.thesis ? (
         <blockquote className="mt-8 font-display text-2xl italic text-fg sm:text-3xl">
@@ -63,7 +106,10 @@ function HousePage() {
                 className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-surface px-5 py-4 shadow-[var(--shadow-border)]"
               >
                 <div className="min-w-0">
-                  <p className="break-words text-sm text-fg">{deal.name}</p>
+                  <p className="flex items-center gap-2 break-words text-sm text-fg">
+                    {deal.name}
+                    {deal.seeded ? <DemoTag /> : null}
+                  </p>
                   <p className="text-[11px] uppercase tracking-[0.14em] text-subtle">
                     {labelOf(dealStages, deal.stage)} · {deal.sector}
                   </p>

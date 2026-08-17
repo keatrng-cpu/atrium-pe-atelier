@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { HouseShell, HouseSkeleton } from "@/components/house/house-shell";
+import { DemoTag, HouseShell, HouseSkeleton } from "@/components/house/house-shell";
 import { useHouse } from "@/components/house/use-house";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -66,7 +66,10 @@ function RoomsPage() {
                 <p className="text-[10px] uppercase tracking-[0.16em] text-subtle">
                   {labelOf(meetingKinds, room.kind)} · {room.status}
                 </p>
-                <p className="mt-1 text-sm text-fg">{room.title}</p>
+                <p className="mt-1 flex items-center gap-2 text-sm text-fg">
+                  {room.title}
+                  {room.seeded ? <DemoTag /> : null}
+                </p>
                 <p className="text-[11px] text-muted">
                   {room.location} · {room.startsAt || "unscheduled"}
                 </p>

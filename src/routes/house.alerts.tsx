@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { HouseShell, HouseSkeleton } from "@/components/house/house-shell";
+import { DemoTag, HouseShell, HouseSkeleton } from "@/components/house/house-shell";
 import { useHouse } from "@/components/house/use-house";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,7 +50,10 @@ function AlertsPage() {
                 {alert.severity} · {alert.kind}
                 {alert.dueOn ? ` · ${alert.dueOn}` : ""}
               </p>
-              <p className="mt-1 text-sm text-fg">{alert.title}</p>
+              <p className="mt-1 flex items-center gap-2 text-sm text-fg">
+                {alert.title}
+                {alert.seeded ? <DemoTag /> : null}
+              </p>
               <p className="mt-1 text-sm text-muted">{alert.body}</p>
             </div>
             <Button

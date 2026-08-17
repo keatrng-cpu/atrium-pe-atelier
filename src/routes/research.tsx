@@ -111,6 +111,12 @@ function ResearchPage() {
               className="max-w-xs uppercase"
             />
           </div>
+          <p className="text-[11px] leading-relaxed text-subtle">
+            Sources are the open web and the public tape — filings, releases, financial press,
+            official statistics. There is no PitchBook, CapIQ, or other subscription feed behind
+            this desk, so private-company marks, deal comps, and fund returns are only ever as good
+            as what has been published. A brief that cannot source a figure omits it.
+          </p>
           <Button type="submit" disabled={busy || query.trim().length < 3}>
             {busy ? "Searching, writing, reviewing…" : "Commission the brief"}
           </Button>

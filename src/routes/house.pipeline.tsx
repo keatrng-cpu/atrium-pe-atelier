@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { HouseShell, HouseSkeleton } from "@/components/house/house-shell";
+import { DemoTag, HouseShell, HouseSkeleton } from "@/components/house/house-shell";
 import { useHouse } from "@/components/house/use-house";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -96,7 +96,10 @@ function PipelinePage() {
                         className="w-full rounded-xl bg-surface p-3 text-left shadow-[var(--shadow-border)]"
                       >
                         <p className="text-sm text-fg">{deal.name}</p>
-                        <p className="mt-1 text-[11px] text-subtle">{deal.enterpriseValue}</p>
+                        <p className="mt-1 flex items-center gap-2 text-[11px] text-subtle">
+                          {deal.enterpriseValue}
+                          {deal.seeded ? <DemoTag /> : null}
+                        </p>
                       </button>
                     </li>
                   ))}
@@ -120,7 +123,10 @@ function PipelinePage() {
                   <p className="text-[11px] uppercase tracking-[0.16em] text-accent">
                     {labelOf(dealStages, deal.stage)}
                   </p>
-                  <h3 className="mt-2 font-display text-3xl text-fg">{deal.name}</h3>
+                  <h3 className="mt-2 flex flex-wrap items-center gap-3 font-display text-3xl text-fg">
+                    {deal.name}
+                    {deal.seeded ? <DemoTag /> : null}
+                  </h3>
                   <p className="mt-2 text-sm text-muted">
                     {deal.sector} · {deal.enterpriseValue}
                   </p>

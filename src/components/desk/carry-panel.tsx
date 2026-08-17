@@ -117,6 +117,11 @@ export function CarryPanel() {
           <span className="tabular-nums text-fg">{formatUsd(result.lpTotal)}</span>
         </li>
       </ul>
+      <p className="text-[11px] leading-relaxed text-subtle">
+        Practice math on the figures you entered — a waterfall you can rebuild under a clock, not a
+        carry ledger. Atrium keeps no capital accounts, runs no capital calls, and tracks no vesting
+        or allocation. Anything a CFO signs comes off the fund's own books.
+      </p>
       <Button type="button" onClick={() => void persist()} disabled={saving}>
         {saving ? "Filing…" : "File this waterfall"}
       </Button>

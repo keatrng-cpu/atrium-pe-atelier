@@ -39,6 +39,7 @@ export type HouseDeal = {
   nextAction: string;
   dueOn: string;
   thesis: string;
+  seeded: boolean;
 };
 
 export type HouseMeeting = {
@@ -53,6 +54,7 @@ export type HouseMeeting = {
   chairId: string;
   dealId: string;
   status: string;
+  seeded: boolean;
 };
 
 export type HouseAlert = {
@@ -65,6 +67,7 @@ export type HouseAlert = {
   dealId: string;
   meetingId: string;
   readAt: string | null;
+  seeded: boolean;
 };
 
 export type HouseCompany = {
@@ -76,6 +79,7 @@ export type HouseCompany = {
   kpiNote: string;
   health: string;
   nextBoard: string;
+  seeded: boolean;
 };
 
 export type HouseWorkstream = {
@@ -85,6 +89,7 @@ export type HouseWorkstream = {
   ownerId: string;
   status: string;
   dueOn: string;
+  seeded: boolean;
 };
 
 export type HouseBundle = {
@@ -115,6 +120,54 @@ async function requireHouse(sql: Awaited<ReturnType<typeof getSql>>, userId: str
   const houseId = await membership(sql, userId);
   if (!houseId) throw new Error("You are not seated in a house.");
   return houseId;
+}
+
+/**
+ * Tenancy guards.
+ *
+ * There is no role model here on purpose — everyone seated in a house may work
+ * the whole book (SCOPE.md § "No roles or permissions beyond 'you sit here'").
+ * That makes the house boundary the ONLY boundary, so it has to hold: every one
+ * of these records is addressed by an id the client supplies, and being seated
+ * in *some* house must never be enough to reach a record in *another* one.
+ *
+ * Call the matching guard before any read or write that takes a caller-supplied
+ * id. `requireHouse` alone is not sufficient — it proves the caller sits
+ * somewhere, not that the row they named sits with them.
+ */
+class NotInHouseError extends Error {
+  readonly status = 404;
+  constructor(what: string) {
+    super(`That ${what} is not on this house's book.`);
+    this.name = "NotInHouseError";
+  }
+}
+
+async function assertDealInHouse(
+  sql: Awaited<ReturnType<typeof getSql>>,
+  houseId: string,
+  dealId: string,
+) {
+  const rows = await sql`select 1 from house_deals where id = ${dealId} and house_id = ${houseId}`;
+  if (!rows[0]) throw new NotInHouseError("process");
+}
+
+async function assertMeetingInHouse(
+  sql: Awaited<ReturnType<typeof getSql>>,
+  houseId: string,
+  meetingId: string,
+) {
+  const rows = await sql`select 1 from house_meetings where id = ${meetingId} and house_id = ${houseId}`;
+  if (!rows[0]) throw new NotInHouseError("room");
+}
+
+async function assertCompanyInHouse(
+  sql: Awaited<ReturnType<typeof getSql>>,
+  houseId: string,
+  companyId: string,
+) {
+  const rows = await sql`select 1 from house_portfolio where id = ${companyId} and house_id = ${houseId}`;
+  if (!rows[0]) throw new NotInHouseError("company");
 }
 
 async function loadBundle(sql: Awaited<ReturnType<typeof getSql>>, houseId: string, userId: string): Promise<HouseBundle> {
@@ -150,8 +203,9 @@ async function loadBundle(sql: Awaited<ReturnType<typeof getSql>>, houseId: stri
     next_action: string;
     due_on: string;
     thesis: string;
+    seeded: boolean;
   }>`
-    select id, name, sector, stage, enterprise_value, owner_id, next_action, due_on, thesis
+    select id, name, sector, stage, enterprise_value, owner_id, next_action, due_on, thesis, seeded
     from house_deals where house_id = ${houseId} order by created_at desc
   `;
 
@@ -162,8 +216,9 @@ async function loadBundle(sql: Awaited<ReturnType<typeof getSql>>, houseId: stri
     owner_id: string;
     status: string;
     due_on: string;
+    seeded: boolean;
   }>`
-    select id, deal_id, title, owner_id, status, due_on
+    select id, deal_id, title, owner_id, status, due_on, seeded
     from house_workstreams where house_id = ${houseId}
   `;
 
@@ -179,8 +234,9 @@ async function loadBundle(sql: Awaited<ReturnType<typeof getSql>>, houseId: stri
     chair_id: string;
     deal_id: string;
     status: string;
+    seeded: boolean;
   }>`
-    select id, kind, title, starts_at, location, agenda, minutes, decision, chair_id, deal_id, status
+    select id, kind, title, starts_at, location, agenda, minutes, decision, chair_id, deal_id, status, seeded
     from house_meetings where house_id = ${houseId} order by starts_at asc
   `;
 
@@ -194,8 +250,9 @@ async function loadBundle(sql: Awaited<ReturnType<typeof getSql>>, houseId: stri
     deal_id: string;
     meeting_id: string;
     read_at: string | null;
+    seeded: boolean;
   }>`
-    select id, kind, title, body, severity, due_on, deal_id, meeting_id, read_at
+    select id, kind, title, body, severity, due_on, deal_id, meeting_id, read_at, seeded
     from house_alerts where house_id = ${houseId} order by created_at desc
   `;
 
@@ -208,8 +265,9 @@ async function loadBundle(sql: Awaited<ReturnType<typeof getSql>>, houseId: stri
     kpi_note: string;
     health: string;
     next_board: string;
+    seeded: boolean;
   }>`
-    select id, name, sector, entry_year, owner_id, kpi_note, health, next_board
+    select id, name, sector, entry_year, owner_id, kpi_note, health, next_board, seeded
     from house_portfolio where house_id = ${houseId} order by name asc
   `;
 
@@ -244,6 +302,7 @@ async function loadBundle(sql: Awaited<ReturnType<typeof getSql>>, houseId: stri
       nextAction: d.next_action,
       dueOn: d.due_on,
       thesis: d.thesis,
+      seeded: d.seeded,
     })),
     workstreams: workstreams.map((w) => ({
       id: w.id,
@@ -252,6 +311,7 @@ async function loadBundle(sql: Awaited<ReturnType<typeof getSql>>, houseId: stri
       ownerId: w.owner_id,
       status: w.status,
       dueOn: w.due_on,
+      seeded: w.seeded,
     })),
     meetings: meetings.map((m) => ({
       id: m.id,
@@ -265,6 +325,7 @@ async function loadBundle(sql: Awaited<ReturnType<typeof getSql>>, houseId: stri
       chairId: m.chair_id,
       dealId: m.deal_id,
       status: m.status,
+      seeded: m.seeded,
     })),
     alerts: alerts.map((a) => ({
       id: a.id,
@@ -276,6 +337,7 @@ async function loadBundle(sql: Awaited<ReturnType<typeof getSql>>, houseId: stri
       dealId: a.deal_id,
       meetingId: a.meeting_id,
       readAt: a.read_at,
+      seeded: a.seeded,
     })),
     portfolio: portfolio.map((p) => ({
       id: p.id,
@@ -286,6 +348,7 @@ async function loadBundle(sql: Awaited<ReturnType<typeof getSql>>, houseId: stri
       kpiNote: p.kpi_note,
       health: p.health,
       nextBoard: p.next_board,
+      seeded: p.seeded,
     })),
   };
 }
@@ -298,41 +361,41 @@ async function seedHouse(sql: Awaited<ReturnType<typeof getSql>>, houseId: strin
   const m2 = nid();
 
   await sql`
-    insert into house_deals (id, house_id, name, sector, stage, enterprise_value, owner_id, next_action, due_on, thesis)
+    insert into house_deals (id, house_id, name, sector, stage, enterprise_value, owner_id, next_action, due_on, thesis, seeded)
     values
-      (${d1}, ${houseId}, ${"Northbridge Industrial"}, ${"Business services"}, ${"diligence"}, ${"$820m"}, ${founderId}, ${"QoE call with PwC"}, ${isoDate(3)}, ${"Route density and pricing power in last-mile facilities."}),
-      (${d2}, ${houseId}, ${"Helix Clinical"}, ${"Healthcare"}, ${"ioi"}, ${"$410m"}, ${founderId}, ${"Independent thesis before banker bake-off"}, ${isoDate(5)}, ${"Provider-light diagnostics. Reimbursement is the risk."}),
-      (${d3}, ${houseId}, ${"Ledger Payments"}, ${"Fintech"}, ${"sourcing"}, ${"$260m"}, ${founderId}, ${"Founder dinner Thursday"}, ${isoDate(2)}, ${"Vertical software with payments attach. Multiple looks full."})
+      (${d1}, ${houseId}, ${"Northbridge Industrial"}, ${"Business services"}, ${"diligence"}, ${"$820m"}, ${founderId}, ${"QoE call with PwC"}, ${isoDate(3)}, ${"Route density and pricing power in last-mile facilities."}, true),
+      (${d2}, ${houseId}, ${"Helix Clinical"}, ${"Healthcare"}, ${"ioi"}, ${"$410m"}, ${founderId}, ${"Independent thesis before banker bake-off"}, ${isoDate(5)}, ${"Provider-light diagnostics. Reimbursement is the risk."}, true),
+      (${d3}, ${houseId}, ${"Ledger Payments"}, ${"Fintech"}, ${"sourcing"}, ${"$260m"}, ${founderId}, ${"Founder dinner Thursday"}, ${isoDate(2)}, ${"Vertical software with payments attach. Multiple looks full."}, true)
   `;
 
   await sql`
-    insert into house_workstreams (id, house_id, deal_id, title, owner_id, status, due_on)
+    insert into house_workstreams (id, house_id, deal_id, title, owner_id, status, due_on, seeded)
     values
-      (${nid()}, ${houseId}, ${d1}, ${"Quality of earnings"}, ${founderId}, ${"open"}, ${isoDate(4)}),
-      (${nid()}, ${houseId}, ${d1}, ${"Customer concentration"}, ${founderId}, ${"open"}, ${isoDate(6)}),
-      (${nid()}, ${houseId}, ${d2}, ${"Reimbursement diligence"}, ${founderId}, ${"open"}, ${isoDate(7)})
+      (${nid()}, ${houseId}, ${d1}, ${"Quality of earnings"}, ${founderId}, ${"open"}, ${isoDate(4)}, true),
+      (${nid()}, ${houseId}, ${d1}, ${"Customer concentration"}, ${founderId}, ${"open"}, ${isoDate(6)}, true),
+      (${nid()}, ${houseId}, ${d2}, ${"Reimbursement diligence"}, ${founderId}, ${"open"}, ${isoDate(7)}, true)
   `;
 
   await sql`
-    insert into house_meetings (id, house_id, kind, title, starts_at, location, agenda, chair_id, deal_id, status)
+    insert into house_meetings (id, house_id, kind, title, starts_at, location, agenda, chair_id, deal_id, status, seeded)
     values
-      (${m1}, ${houseId}, ${"pipeline"}, ${"Monday pipeline"}, ${isoDate(0)}, ${"Boardroom A"}, ${"1. Live processes\n2. Passes this week\n3. Coverage gaps"}, ${founderId}, ${""}, ${"scheduled"}),
-      (${m2}, ${houseId}, ${"ic"}, ${"IC — Northbridge Industrial"}, ${isoDate(4)}, ${"IC room"}, ${"1. Thesis\n2. Returns\n3. Risks that kill\n4. Decision"}, ${founderId}, ${d1}, ${"scheduled"})
+      (${m1}, ${houseId}, ${"pipeline"}, ${"Monday pipeline"}, ${isoDate(0)}, ${"Boardroom A"}, ${"1. Live processes\n2. Passes this week\n3. Coverage gaps"}, ${founderId}, ${""}, ${"scheduled"}, true),
+      (${m2}, ${houseId}, ${"ic"}, ${"IC — Northbridge Industrial"}, ${isoDate(4)}, ${"IC room"}, ${"1. Thesis\n2. Returns\n3. Risks that kill\n4. Decision"}, ${founderId}, ${d1}, ${"scheduled"}, true)
   `;
 
   await sql`
-    insert into house_alerts (id, house_id, kind, title, body, severity, due_on, deal_id, meeting_id)
+    insert into house_alerts (id, house_id, kind, title, body, severity, due_on, deal_id, meeting_id, seeded)
     values
-      (${nid()}, ${houseId}, ${"ic-prep"}, ${"IC memo due"}, ${"Northbridge papers circulate 24 hours before the room."}, ${"urgent"}, ${isoDate(3)}, ${d1}, ${m2}),
-      (${nid()}, ${houseId}, ${"deadline"}, ${"QoE draft"}, ${"Accountant draft lands Wednesday. Variance vs CIM add-backs."}, ${"watch"}, ${isoDate(3)}, ${d1}, ${""}),
-      (${nid()}, ${houseId}, ${"kpi"}, ${"Helix portfolio print"}, ${"Same-store visits −4% vs underwrite. Pack is late."}, ${"urgent"}, ${isoDate(1)}, ${""}, ${""})
+      (${nid()}, ${houseId}, ${"ic-prep"}, ${"IC memo due"}, ${"Northbridge papers circulate 24 hours before the room."}, ${"urgent"}, ${isoDate(3)}, ${d1}, ${m2}, true),
+      (${nid()}, ${houseId}, ${"deadline"}, ${"QoE draft"}, ${"Accountant draft lands Wednesday. Variance vs CIM add-backs."}, ${"watch"}, ${isoDate(3)}, ${d1}, ${""}, true),
+      (${nid()}, ${houseId}, ${"kpi"}, ${"Helix portfolio print"}, ${"Same-store visits −4% vs underwrite. Pack is late."}, ${"urgent"}, ${isoDate(1)}, ${""}, ${""}, true)
   `;
 
   await sql`
-    insert into house_portfolio (id, house_id, name, sector, entry_year, owner_id, kpi_note, health, next_board)
+    insert into house_portfolio (id, house_id, name, sector, entry_year, owner_id, kpi_note, health, next_board, seeded)
     values
-      (${nid()}, ${houseId}, ${"Alder Facilities"}, ${"Industrials"}, ${"2023"}, ${founderId}, ${"EBITDA +11% vs underwrite. Procurement still open."}, ${"on-plan"}, ${isoDate(12)}),
-      (${nid()}, ${houseId}, ${"Marlow Health"}, ${"Healthcare"}, ${"2022"}, ${founderId}, ${"Volume miss two quarters. New CRO in seat 40 days."}, ${"watch"}, ${isoDate(8)})
+      (${nid()}, ${houseId}, ${"Alder Facilities"}, ${"Industrials"}, ${"2023"}, ${founderId}, ${"EBITDA +11% vs underwrite. Procurement still open."}, ${"on-plan"}, ${isoDate(12)}, true),
+      (${nid()}, ${houseId}, ${"Marlow Health"}, ${"Healthcare"}, ${"2022"}, ${founderId}, ${"Volume miss two quarters. New CRO in seat 40 days."}, ${"watch"}, ${isoDate(8)}, true)
   `;
 }
 
@@ -435,6 +498,8 @@ export const updateSeat = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const sql = await getSql();
     const houseId = await requireHouse(sql, context.userId);
+    const seated = await sql`select 1 from house_members where house_id = ${houseId} and user_id = ${data.userId}`;
+    if (!seated[0]) throw new NotInHouseError("member");
     await sql`
       update house_members
       set seat = ${data.seat}, fn = ${data.fn}, title = ${data.title}
@@ -463,6 +528,7 @@ export const saveDeal = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const sql = await getSql();
     const houseId = await requireHouse(sql, context.userId);
+    if (data.id) await assertDealInHouse(sql, houseId, data.id);
     const id = data.id || nid();
     const owner = data.ownerId || context.userId;
     await sql`
@@ -496,6 +562,7 @@ export const addWorkstream = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const sql = await getSql();
     const houseId = await requireHouse(sql, context.userId);
+    await assertDealInHouse(sql, houseId, data.dealId);
     const id = nid();
     await sql`
       insert into house_workstreams (id, house_id, deal_id, title, owner_id, due_on)
@@ -537,6 +604,8 @@ export const saveMeeting = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const sql = await getSql();
     const houseId = await requireHouse(sql, context.userId);
+    if (data.id) await assertMeetingInHouse(sql, houseId, data.id);
+    if (data.dealId) await assertDealInHouse(sql, houseId, data.dealId);
     const id = data.id || nid();
     await sql`
       insert into house_meetings (id, house_id, kind, title, starts_at, location, agenda, chair_id, deal_id)
@@ -577,6 +646,7 @@ export const updateMeetingRoom = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const sql = await getSql();
     const houseId = await requireHouse(sql, context.userId);
+    await assertMeetingInHouse(sql, houseId, data.id);
     if (data.minutes != null) {
       await sql`update house_meetings set minutes = ${data.minutes} where id = ${data.id} and house_id = ${houseId}`;
     }
@@ -601,7 +671,8 @@ export const setAttendance = createServerFn({ method: "POST" })
   )
   .handler(async ({ context, data }) => {
     const sql = await getSql();
-    await requireHouse(sql, context.userId);
+    const houseId = await requireHouse(sql, context.userId);
+    await assertMeetingInHouse(sql, houseId, data.meetingId);
     await sql`
       insert into house_attendance (meeting_id, user_id, status)
       values (${data.meetingId}, ${context.userId}, ${data.status})
@@ -618,6 +689,7 @@ export const addRoomNote = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const sql = await getSql();
     const houseId = await requireHouse(sql, context.userId);
+    await assertMeetingInHouse(sql, houseId, data.meetingId);
     const names = await sql<{ given_name: string }>`
       select given_name from house_members where house_id = ${houseId} and user_id = ${context.userId}
     `;
@@ -633,8 +705,9 @@ export const listRoomNotes = createServerFn({ method: "GET" })
   .middleware([authMiddleware])
   .validator((input: unknown) => z.object({ meetingId: z.string() }).parse(input))
   .handler(async ({ context, data }) => {
-    await requireHouse(await getSql(), context.userId);
     const sql = await getSql();
+    const houseId = await requireHouse(sql, context.userId);
+    await assertMeetingInHouse(sql, houseId, data.meetingId);
     const rows = await sql<{
       id: string;
       author: string;
@@ -657,7 +730,8 @@ export const listAttendance = createServerFn({ method: "GET" })
   .validator((input: unknown) => z.object({ meetingId: z.string() }).parse(input))
   .handler(async ({ context, data }) => {
     const sql = await getSql();
-    await requireHouse(sql, context.userId);
+    const houseId = await requireHouse(sql, context.userId);
+    await assertMeetingInHouse(sql, houseId, data.meetingId);
     const rows = await sql<{ user_id: string; status: string }>`
       select user_id, status from house_attendance where meeting_id = ${data.meetingId}
     `;
@@ -681,6 +755,7 @@ export const saveAlert = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const sql = await getSql();
     const houseId = await requireHouse(sql, context.userId);
+    if (data.dealId) await assertDealInHouse(sql, houseId, data.dealId);
     const id = nid();
     await sql`
       insert into house_alerts (id, house_id, kind, title, body, severity, due_on, deal_id)
@@ -721,6 +796,7 @@ export const savePortfolio = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const sql = await getSql();
     const houseId = await requireHouse(sql, context.userId);
+    if (data.id) await assertCompanyInHouse(sql, houseId, data.id);
     const id = data.id || nid();
     await sql`
       insert into house_portfolio (id, house_id, name, sector, entry_year, owner_id, kpi_note, health, next_board)
@@ -735,4 +811,51 @@ export const savePortfolio = createServerFn({ method: "POST" })
         next_board = excluded.next_board
     `;
     return { id };
+  });
+
+/**
+ * Clear the demo book.
+ *
+ * A new house opens seeded so the room is not empty on day one (SCOPE.md
+ * § "House books seed a demo pipeline"). Once real work lands, the demo rows
+ * are noise — this removes every row `seedHouse()` wrote and nothing else.
+ *
+ * Workstreams, attendance, and room notes cascade from their parent deal or
+ * meeting, so a member-authored workstream hung on a demo deal goes with it —
+ * the confirm copy on the floor says so. Alerts carry `deal_id` / `meeting_id`
+ * as plain text with no foreign key, so any surviving alert pointing at a
+ * removed row has that pointer cleared rather than left dangling.
+ */
+export const clearDemoBook = createServerFn({ method: "POST" })
+  .middleware([authMiddleware])
+  .handler(async ({ context }) => {
+    const sql = await getSql();
+    const houseId = await requireHouse(sql, context.userId);
+
+    const deals = await sql<{ id: string }>`
+      select id from house_deals where house_id = ${houseId} and seeded = true
+    `;
+    const meetings = await sql<{ id: string }>`
+      select id from house_meetings where house_id = ${houseId} and seeded = true
+    `;
+
+    await sql`delete from house_deals where house_id = ${houseId} and seeded = true`;
+    await sql`delete from house_meetings where house_id = ${houseId} and seeded = true`;
+    await sql`delete from house_alerts where house_id = ${houseId} and seeded = true`;
+    await sql`delete from house_portfolio where house_id = ${houseId} and seeded = true`;
+
+    for (const deal of deals) {
+      await sql`
+        update house_alerts set deal_id = ${""}
+        where house_id = ${houseId} and deal_id = ${deal.id}
+      `;
+    }
+    for (const meeting of meetings) {
+      await sql`
+        update house_alerts set meeting_id = ${""}
+        where house_id = ${houseId} and meeting_id = ${meeting.id}
+      `;
+    }
+
+    return { cleared: deals.length + meetings.length };
   });

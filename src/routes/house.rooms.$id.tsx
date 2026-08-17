@@ -127,6 +127,11 @@ function RoomPage() {
               onBlur={() => void persist({ decision })}
               placeholder="Approve / pass / more work. One sentence."
             />
+            <p className="mt-3 text-[11px] leading-relaxed text-subtle">
+              A working record of what the room concluded. Atrium does not take votes and this is
+              not a record of corporate action — no quorum, no tally, no signature. Where a decision
+              has to bind, it gets made and minuted in your firm's own books.
+            </p>
           </article>
         </section>
 

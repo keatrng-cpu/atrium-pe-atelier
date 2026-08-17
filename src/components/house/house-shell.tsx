@@ -65,6 +65,24 @@ export function HouseShell({
   );
 }
 
+/**
+ * Marks a row that came from the demo seed (SCOPE.md § "House books seed a demo
+ * pipeline"). A house that cannot tell the seed from its own work has a book it
+ * cannot trust, so every seeded row carries this wherever it is listed.
+ */
+export function DemoTag({ className }: { className?: string }) {
+  return (
+    <span
+      className={cn(
+        "shrink-0 rounded-full bg-elevated px-2 py-0.5 text-[9px] uppercase tracking-[0.14em] text-subtle",
+        className,
+      )}
+    >
+      Demo
+    </span>
+  );
+}
+
 export function HouseSkeleton() {
   return (
     <PageShell>

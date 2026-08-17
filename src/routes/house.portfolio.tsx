@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { HouseShell, HouseSkeleton } from "@/components/house/house-shell";
+import { DemoTag, HouseShell, HouseSkeleton } from "@/components/house/house-shell";
 import { useHouse } from "@/components/house/use-house";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,7 +43,10 @@ function PortfolioPage() {
             <p className="text-[10px] uppercase tracking-[0.16em] text-accent">
               {labelOf(healthStates, co.health)} · {co.entryYear}
             </p>
-            <h3 className="mt-2 font-display text-3xl text-fg">{co.name}</h3>
+            <h3 className="mt-2 flex flex-wrap items-center gap-3 font-display text-3xl text-fg">
+              {co.name}
+              {co.seeded ? <DemoTag /> : null}
+            </h3>
             <p className="mt-1 text-sm text-subtle">{co.sector}</p>
             <p className="mt-4 text-sm text-muted">{co.kpiNote}</p>
             <p className="mt-3 text-[11px] uppercase tracking-[0.14em] text-subtle">
