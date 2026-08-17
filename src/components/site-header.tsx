@@ -7,11 +7,11 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
 const nav = [
+  { to: "/house", label: "House" },
   { to: "/desk", label: "Desk" },
   { to: "/ladder", label: "The Ladder" },
   { to: "/performers", label: "High Performers" },
   { to: "/mastery", label: "Mastery" },
-  { to: "/realities", label: "Realities" },
   { to: "/firms", label: "Firms" },
 ] as const;
 

@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CorrespondenceRouteImport } from './routes/correspondence'
 import { Route as DeskRouteImport } from './routes/desk'
 import { Route as FirmsRouteImport } from './routes/firms'
+import { Route as HouseRouteImport } from './routes/house'
 import { Route as InductionRouteImport } from './routes/induction'
 import { Route as LadderRouteImport } from './routes/ladder'
 import { Route as LoginRouteImport } from './routes/login'
@@ -22,8 +23,14 @@ import { Route as RealitiesRouteImport } from './routes/realities'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as StudioRouteImport } from './routes/studio'
 import { Route as CorrespondenceIdRouteImport } from './routes/correspondence.$id'
+import { Route as HouseAlertsRouteImport } from './routes/house.alerts'
+import { Route as HousePipelineRouteImport } from './routes/house.pipeline'
+import { Route as HousePortfolioRouteImport } from './routes/house.portfolio'
+import { Route as HouseRoomsRouteImport } from './routes/house.rooms'
+import { Route as HouseSeatsRouteImport } from './routes/house.seats'
 import { Route as LadderRankRouteImport } from './routes/ladder.$rank'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as HouseRoomsIdRouteImport } from './routes/house.rooms.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -43,6 +50,11 @@ const DeskRoute = DeskRouteImport.update({
 const FirmsRoute = FirmsRouteImport.update({
   id: '/firms',
   path: '/firms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HouseRoute = HouseRouteImport.update({
+  id: '/house',
+  path: '/house',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InductionRoute = InductionRouteImport.update({
@@ -90,6 +102,31 @@ const CorrespondenceIdRoute = CorrespondenceIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => CorrespondenceRoute,
 } as any)
+const HouseAlertsRoute = HouseAlertsRouteImport.update({
+  id: '/alerts',
+  path: '/alerts',
+  getParentRoute: () => HouseRoute,
+} as any)
+const HousePipelineRoute = HousePipelineRouteImport.update({
+  id: '/pipeline',
+  path: '/pipeline',
+  getParentRoute: () => HouseRoute,
+} as any)
+const HousePortfolioRoute = HousePortfolioRouteImport.update({
+  id: '/portfolio',
+  path: '/portfolio',
+  getParentRoute: () => HouseRoute,
+} as any)
+const HouseRoomsRoute = HouseRoomsRouteImport.update({
+  id: '/rooms',
+  path: '/rooms',
+  getParentRoute: () => HouseRoute,
+} as any)
+const HouseSeatsRoute = HouseSeatsRouteImport.update({
+  id: '/seats',
+  path: '/seats',
+  getParentRoute: () => HouseRoute,
+} as any)
 const LadderRankRoute = LadderRankRouteImport.update({
   id: '/$rank',
   path: '/$rank',
@@ -100,12 +137,18 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HouseRoomsIdRoute = HouseRoomsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => HouseRoomsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/correspondence': typeof CorrespondenceRouteWithChildren
   '/desk': typeof DeskRoute
   '/firms': typeof FirmsRoute
+  '/house': typeof HouseRouteWithChildren
   '/induction': typeof InductionRoute
   '/ladder': typeof LadderRouteWithChildren
   '/login': typeof LoginRoute
@@ -115,14 +158,21 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/studio': typeof StudioRoute
   '/correspondence/$id': typeof CorrespondenceIdRoute
+  '/house/alerts': typeof HouseAlertsRoute
+  '/house/pipeline': typeof HousePipelineRoute
+  '/house/portfolio': typeof HousePortfolioRoute
+  '/house/rooms': typeof HouseRoomsRouteWithChildren
+  '/house/seats': typeof HouseSeatsRoute
   '/ladder/$rank': typeof LadderRankRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/house/rooms/$id': typeof HouseRoomsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/correspondence': typeof CorrespondenceRouteWithChildren
   '/desk': typeof DeskRoute
   '/firms': typeof FirmsRoute
+  '/house': typeof HouseRouteWithChildren
   '/induction': typeof InductionRoute
   '/ladder': typeof LadderRouteWithChildren
   '/login': typeof LoginRoute
@@ -132,8 +182,14 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/studio': typeof StudioRoute
   '/correspondence/$id': typeof CorrespondenceIdRoute
+  '/house/alerts': typeof HouseAlertsRoute
+  '/house/pipeline': typeof HousePipelineRoute
+  '/house/portfolio': typeof HousePortfolioRoute
+  '/house/rooms': typeof HouseRoomsRouteWithChildren
+  '/house/seats': typeof HouseSeatsRoute
   '/ladder/$rank': typeof LadderRankRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/house/rooms/$id': typeof HouseRoomsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -141,6 +197,7 @@ export interface FileRoutesById {
   '/correspondence': typeof CorrespondenceRouteWithChildren
   '/desk': typeof DeskRoute
   '/firms': typeof FirmsRoute
+  '/house': typeof HouseRouteWithChildren
   '/induction': typeof InductionRoute
   '/ladder': typeof LadderRouteWithChildren
   '/login': typeof LoginRoute
@@ -150,8 +207,14 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/studio': typeof StudioRoute
   '/correspondence/$id': typeof CorrespondenceIdRoute
+  '/house/alerts': typeof HouseAlertsRoute
+  '/house/pipeline': typeof HousePipelineRoute
+  '/house/portfolio': typeof HousePortfolioRoute
+  '/house/rooms': typeof HouseRoomsRouteWithChildren
+  '/house/seats': typeof HouseSeatsRoute
   '/ladder/$rank': typeof LadderRankRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/house/rooms/$id': typeof HouseRoomsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -160,6 +223,7 @@ export interface FileRouteTypes {
     | '/correspondence'
     | '/desk'
     | '/firms'
+    | '/house'
     | '/induction'
     | '/ladder'
     | '/login'
@@ -169,14 +233,21 @@ export interface FileRouteTypes {
     | '/signup'
     | '/studio'
     | '/correspondence/$id'
+    | '/house/alerts'
+    | '/house/pipeline'
+    | '/house/portfolio'
+    | '/house/rooms'
+    | '/house/seats'
     | '/ladder/$rank'
     | '/api/auth/$'
+    | '/house/rooms/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/correspondence'
     | '/desk'
     | '/firms'
+    | '/house'
     | '/induction'
     | '/ladder'
     | '/login'
@@ -186,14 +257,21 @@ export interface FileRouteTypes {
     | '/signup'
     | '/studio'
     | '/correspondence/$id'
+    | '/house/alerts'
+    | '/house/pipeline'
+    | '/house/portfolio'
+    | '/house/rooms'
+    | '/house/seats'
     | '/ladder/$rank'
     | '/api/auth/$'
+    | '/house/rooms/$id'
   id:
     | '__root__'
     | '/'
     | '/correspondence'
     | '/desk'
     | '/firms'
+    | '/house'
     | '/induction'
     | '/ladder'
     | '/login'
@@ -203,8 +281,14 @@ export interface FileRouteTypes {
     | '/signup'
     | '/studio'
     | '/correspondence/$id'
+    | '/house/alerts'
+    | '/house/pipeline'
+    | '/house/portfolio'
+    | '/house/rooms'
+    | '/house/seats'
     | '/ladder/$rank'
     | '/api/auth/$'
+    | '/house/rooms/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -212,6 +296,7 @@ export interface RootRouteChildren {
   CorrespondenceRoute: typeof CorrespondenceRouteWithChildren
   DeskRoute: typeof DeskRoute
   FirmsRoute: typeof FirmsRoute
+  HouseRoute: typeof HouseRouteWithChildren
   InductionRoute: typeof InductionRoute
   LadderRoute: typeof LadderRouteWithChildren
   LoginRoute: typeof LoginRoute
@@ -251,6 +336,13 @@ declare module '@tanstack/react-router' {
       path: '/firms'
       fullPath: '/firms'
       preLoaderRoute: typeof FirmsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/house': {
+      id: '/house'
+      path: '/house'
+      fullPath: '/house'
+      preLoaderRoute: typeof HouseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/induction': {
@@ -316,6 +408,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CorrespondenceIdRouteImport
       parentRoute: typeof CorrespondenceRoute
     }
+    '/house/alerts': {
+      id: '/house/alerts'
+      path: '/alerts'
+      fullPath: '/house/alerts'
+      preLoaderRoute: typeof HouseAlertsRouteImport
+      parentRoute: typeof HouseRoute
+    }
+    '/house/pipeline': {
+      id: '/house/pipeline'
+      path: '/pipeline'
+      fullPath: '/house/pipeline'
+      preLoaderRoute: typeof HousePipelineRouteImport
+      parentRoute: typeof HouseRoute
+    }
+    '/house/portfolio': {
+      id: '/house/portfolio'
+      path: '/portfolio'
+      fullPath: '/house/portfolio'
+      preLoaderRoute: typeof HousePortfolioRouteImport
+      parentRoute: typeof HouseRoute
+    }
+    '/house/rooms': {
+      id: '/house/rooms'
+      path: '/rooms'
+      fullPath: '/house/rooms'
+      preLoaderRoute: typeof HouseRoomsRouteImport
+      parentRoute: typeof HouseRoute
+    }
+    '/house/seats': {
+      id: '/house/seats'
+      path: '/seats'
+      fullPath: '/house/seats'
+      preLoaderRoute: typeof HouseSeatsRouteImport
+      parentRoute: typeof HouseRoute
+    }
     '/ladder/$rank': {
       id: '/ladder/$rank'
       path: '/$rank'
@@ -329,6 +456,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/house/rooms/$id': {
+      id: '/house/rooms/$id'
+      path: '/$id'
+      fullPath: '/house/rooms/$id'
+      preLoaderRoute: typeof HouseRoomsIdRouteImport
+      parentRoute: typeof HouseRoomsRoute
     }
   }
 }
@@ -344,6 +478,36 @@ const CorrespondenceRouteChildren: CorrespondenceRouteChildren = {
 const CorrespondenceRouteWithChildren = CorrespondenceRoute._addFileChildren(
   CorrespondenceRouteChildren,
 )
+
+interface HouseRoomsRouteChildren {
+  HouseRoomsIdRoute: typeof HouseRoomsIdRoute
+}
+
+const HouseRoomsRouteChildren: HouseRoomsRouteChildren = {
+  HouseRoomsIdRoute: HouseRoomsIdRoute,
+}
+
+const HouseRoomsRouteWithChildren = HouseRoomsRoute._addFileChildren(
+  HouseRoomsRouteChildren,
+)
+
+interface HouseRouteChildren {
+  HouseAlertsRoute: typeof HouseAlertsRoute
+  HousePipelineRoute: typeof HousePipelineRoute
+  HousePortfolioRoute: typeof HousePortfolioRoute
+  HouseRoomsRoute: typeof HouseRoomsRouteWithChildren
+  HouseSeatsRoute: typeof HouseSeatsRoute
+}
+
+const HouseRouteChildren: HouseRouteChildren = {
+  HouseAlertsRoute: HouseAlertsRoute,
+  HousePipelineRoute: HousePipelineRoute,
+  HousePortfolioRoute: HousePortfolioRoute,
+  HouseRoomsRoute: HouseRoomsRouteWithChildren,
+  HouseSeatsRoute: HouseSeatsRoute,
+}
+
+const HouseRouteWithChildren = HouseRoute._addFileChildren(HouseRouteChildren)
 
 interface LadderRouteChildren {
   LadderRankRoute: typeof LadderRankRoute
@@ -361,6 +525,7 @@ const rootRouteChildren: RootRouteChildren = {
   CorrespondenceRoute: CorrespondenceRouteWithChildren,
   DeskRoute: DeskRoute,
   FirmsRoute: FirmsRoute,
+  HouseRoute: HouseRouteWithChildren,
   InductionRoute: InductionRoute,
   LadderRoute: LadderRouteWithChildren,
   LoginRoute: LoginRoute,

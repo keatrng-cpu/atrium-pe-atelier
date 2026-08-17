@@ -12,14 +12,14 @@ export function SiteFooter() {
           </p>
         </div>
         <div className="flex flex-wrap gap-x-6 gap-y-2 text-[11px] uppercase tracking-[0.16em] text-subtle">
+          <Link to="/house" className="hover:text-fg">
+            House
+          </Link>
           <Link to="/desk" className="hover:text-fg">
             Desk
           </Link>
           <Link to="/ladder" className="hover:text-fg">
             Ladder
-          </Link>
-          <Link to="/mastery" className="hover:text-fg">
-            Mastery
           </Link>
           <Link to="/login" className="hover:text-fg">
             Members
