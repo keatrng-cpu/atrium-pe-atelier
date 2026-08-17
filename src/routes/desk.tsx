@@ -10,7 +10,9 @@ import { DraftPanel } from "@/components/desk/draft-panel";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { askCounsel, type CounselMessage } from "@/lib/server/counsel";
 import { listWork, saveWork, type WorkRow } from "@/lib/server/work";
+import { loadProfile } from "@/lib/server/profile";
 import { jobs, jobsForRank, type JobKind } from "@/data/jobs";
+import { rankFromProfile } from "@/data/profile";
 import { ranks, type RankId } from "@/data/ranks";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +27,7 @@ function DeskPage() {
   const [messages, setMessages] = useState<CounselMessage[]>([]);
   const [busy, setBusy] = useState(false);
   const [library, setLibrary] = useState<WorkRow[]>([]);
+  const [knownAs, setKnownAs] = useState("");
 
   const available = useMemo(() => jobsForRank(rank), [rank]);
   const job = jobs.find((j) => j.id === kind) ?? jobs[0];
@@ -40,6 +43,12 @@ function DeskPage() {
     listWork()
       .then(setLibrary)
       .catch(() => setLibrary([]));
+    loadProfile()
+      .then((p) => {
+        setKnownAs(p.givenName);
+        if (p.jobLevel) setRank(rankFromProfile(p.jobLevel));
+      })
+      .catch(() => undefined);
   }, [isPending, user]);
 
   if (isPending) {
@@ -103,12 +112,12 @@ function DeskPage() {
             <p className="text-[11px] uppercase tracking-[0.22em] text-accent">The desk</p>
             <h1 className="mt-2 font-display text-4xl text-fg">Do the work of the seat.</h1>
             <p className="mt-2 max-w-xl text-sm text-muted">
-              Engines compute. Counsel explains. Same rule as a serious trading desk: the model
-              never invents a number.
+              Engines compute. Counsel explains — and remembers your dossier. The model never
+              invents a number.
             </p>
           </div>
           <p className="text-sm text-subtle">
-            {user ? (user.displayName ?? "Member") : "Guest"} ·{" "}
+            {knownAs || (user ? (user.displayName ?? "Member") : "Guest")} ·{" "}
             {ranks.find((r) => r.id === rank)?.shortTitle}
           </p>
         </div>

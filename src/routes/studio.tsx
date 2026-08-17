@@ -2,12 +2,15 @@ import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { PageIntro, PageShell } from "@/components/page-shell";
+import { ProfileFields } from "@/components/profile-fields";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RedirectToSignIn } from "@/lib/auth/gates";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { loadStudio, saveStudio, type ProgressRow } from "@/lib/server/atelier";
+import { loadProfile, saveProfile } from "@/lib/server/profile";
+import { emptyProfile, type MemberProfile } from "@/data/profile";
 import { masterySkills } from "@/data/mastery";
 import { firmTiers, ranks, type FirmTier, type RankId } from "@/data/ranks";
 import { cn } from "@/lib/utils";
@@ -27,18 +30,22 @@ function StudioPage() {
   const [firmTier, setFirmTier] = useState<FirmTier>("umm");
   const [dealLog, setDealLog] = useState("");
   const [skills, setSkills] = useState<ProgressRow[]>([]);
+  const [profile, setProfile] = useState<MemberProfile>(emptyProfile);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (isPending || !user) return;
     let cancelled = false;
-    loadStudio()
-      .then((data) => {
+    Promise.all([loadStudio(), loadProfile().catch(() => emptyProfile())])
+      .then(([data, dossier]) => {
         if (cancelled) return;
         setTargetRank((data.profile.targetRank as RankId) || "analyst");
         setFirmTier((data.profile.firmTier as FirmTier) || "umm");
         setDealLog(data.profile.dealLog);
         setSkills(data.skills);
+        setProfile(
+          dossier.givenName ? dossier : { ...dossier, givenName: user.displayName ?? "" },
+        );
         setReady(true);
       })
       .catch(() => {
@@ -69,8 +76,13 @@ function StudioPage() {
 
   const rank = ranks.find((r) => r.id === targetRank);
   const mastered = skills.filter((s) => s.status === "mastered").length;
+  const firstName = profile.givenName.split(" ")[0] || user.displayName?.split(" ")[0] || "colleague";
 
   async function onSave() {
+    if (!profile.givenName.trim()) {
+      toast.error("A name is required.");
+      return;
+    }
     setSaving(true);
     try {
       await saveStudio({
@@ -85,7 +97,8 @@ function StudioPage() {
           })),
         },
       });
-      toast.success("Studio saved.");
+      await saveProfile({ data: { ...profile, givenName: profile.givenName.trim() } });
+      toast.success("Studio and dossier saved. Counsel will remember.");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not save");
     } finally {
@@ -97,8 +110,8 @@ function StudioPage() {
     <PageShell>
       <PageIntro
         kicker="The studio"
-        title={`Good morning, ${user.displayName?.split(" ")[0] ?? "colleague"}.`}
-        lede="Set the seat you are working toward. Keep the seven practices honest. Write the deals you do not want to misremember."
+        title={`Good morning, ${firstName}.`}
+        lede="Your dossier is Counsel’s memory. The seven practices stay honest. The deal log is for the ones you do not want to misremember."
       />
 
       <section className="mx-auto max-w-4xl space-y-8 px-5 pb-24 sm:px-8">
@@ -118,6 +131,17 @@ function StudioPage() {
             <p className="mt-2 font-display text-2xl tabular-nums text-fg">
               {mastered} / {masterySkills.length}
             </p>
+          </div>
+        </div>
+
+        <div className="rounded-2xl bg-surface p-6 shadow-[var(--shadow-border)] sm:p-8">
+          <p className="text-[11px] uppercase tracking-[0.18em] text-accent">Dossier</p>
+          <h2 className="mt-2 font-display text-3xl text-fg">What Counsel remembers</h2>
+          <p className="mt-3 text-sm text-muted">
+            Name is required. The rest is optional and is injected into every Counsel sitting.
+          </p>
+          <div className="mt-8">
+            <ProfileFields value={profile} onChange={setProfile} nameRequired />
           </div>
         </div>
 

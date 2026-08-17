@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CorrespondenceRouteImport } from './routes/correspondence'
 import { Route as DeskRouteImport } from './routes/desk'
 import { Route as FirmsRouteImport } from './routes/firms'
+import { Route as InductionRouteImport } from './routes/induction'
 import { Route as LadderRouteImport } from './routes/ladder'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MasteryRouteImport } from './routes/mastery'
@@ -42,6 +43,11 @@ const DeskRoute = DeskRouteImport.update({
 const FirmsRoute = FirmsRouteImport.update({
   id: '/firms',
   path: '/firms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InductionRoute = InductionRouteImport.update({
+  id: '/induction',
+  path: '/induction',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LadderRoute = LadderRouteImport.update({
@@ -100,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/correspondence': typeof CorrespondenceRouteWithChildren
   '/desk': typeof DeskRoute
   '/firms': typeof FirmsRoute
+  '/induction': typeof InductionRoute
   '/ladder': typeof LadderRouteWithChildren
   '/login': typeof LoginRoute
   '/mastery': typeof MasteryRoute
@@ -116,6 +123,7 @@ export interface FileRoutesByTo {
   '/correspondence': typeof CorrespondenceRouteWithChildren
   '/desk': typeof DeskRoute
   '/firms': typeof FirmsRoute
+  '/induction': typeof InductionRoute
   '/ladder': typeof LadderRouteWithChildren
   '/login': typeof LoginRoute
   '/mastery': typeof MasteryRoute
@@ -133,6 +141,7 @@ export interface FileRoutesById {
   '/correspondence': typeof CorrespondenceRouteWithChildren
   '/desk': typeof DeskRoute
   '/firms': typeof FirmsRoute
+  '/induction': typeof InductionRoute
   '/ladder': typeof LadderRouteWithChildren
   '/login': typeof LoginRoute
   '/mastery': typeof MasteryRoute
@@ -151,6 +160,7 @@ export interface FileRouteTypes {
     | '/correspondence'
     | '/desk'
     | '/firms'
+    | '/induction'
     | '/ladder'
     | '/login'
     | '/mastery'
@@ -167,6 +177,7 @@ export interface FileRouteTypes {
     | '/correspondence'
     | '/desk'
     | '/firms'
+    | '/induction'
     | '/ladder'
     | '/login'
     | '/mastery'
@@ -183,6 +194,7 @@ export interface FileRouteTypes {
     | '/correspondence'
     | '/desk'
     | '/firms'
+    | '/induction'
     | '/ladder'
     | '/login'
     | '/mastery'
@@ -200,6 +212,7 @@ export interface RootRouteChildren {
   CorrespondenceRoute: typeof CorrespondenceRouteWithChildren
   DeskRoute: typeof DeskRoute
   FirmsRoute: typeof FirmsRoute
+  InductionRoute: typeof InductionRoute
   LadderRoute: typeof LadderRouteWithChildren
   LoginRoute: typeof LoginRoute
   MasteryRoute: typeof MasteryRoute
@@ -238,6 +251,13 @@ declare module '@tanstack/react-router' {
       path: '/firms'
       fullPath: '/firms'
       preLoaderRoute: typeof FirmsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/induction': {
+      id: '/induction'
+      path: '/induction'
+      fullPath: '/induction'
+      preLoaderRoute: typeof InductionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ladder': {
@@ -341,6 +361,7 @@ const rootRouteChildren: RootRouteChildren = {
   CorrespondenceRoute: CorrespondenceRouteWithChildren,
   DeskRoute: DeskRoute,
   FirmsRoute: FirmsRoute,
+  InductionRoute: InductionRoute,
   LadderRoute: LadderRouteWithChildren,
   LoginRoute: LoginRoute,
   MasteryRoute: MasteryRoute,

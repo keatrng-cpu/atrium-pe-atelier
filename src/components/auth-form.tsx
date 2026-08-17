@@ -6,14 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Letter } from "@/components/letter";
+import { ProfileFields } from "@/components/profile-fields";
 import { letterTemplates } from "@/data/letters";
+import { emptyProfile, type MemberProfile } from "@/data/profile";
+import { saveProfile } from "@/lib/server/profile";
 import { cn } from "@/lib/utils";
 
 export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [profile, setProfile] = useState<MemberProfile>(emptyProfile);
   const [busy, setBusy] = useState(false);
   const isJoin = mode === "signup";
 
@@ -23,13 +26,20 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
     setBusy(true);
     try {
       if (isJoin) {
+        const given = profile.givenName.trim();
+        if (!given) throw new Error("A name is required.");
         const { error } = await authClient.signUp.email({
           email,
           password,
-          name: name.trim() || email.split("@")[0] || "Member",
+          name: given,
         });
         if (error) throw new Error(error.message ?? "Could not open the account");
-        toast.success("Welcome. Your first letters are waiting.");
+        try {
+          await saveProfile({ data: { ...profile, givenName: given } });
+        } catch {
+          // Account exists; the dossier can be finished in the studio.
+        }
+        toast.success("Welcome. Counsel will remember this dossier.");
         await navigate({ to: "/correspondence" });
       } else {
         const { error } = await authClient.signIn.email({ email, password });
@@ -46,14 +56,14 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
 
   return (
     <div className="grid min-h-dvh lg:grid-cols-2">
-      <div className="relative overflow-hidden bg-surface">
+      <div className="relative order-2 overflow-hidden bg-surface lg:sticky lg:top-0 lg:order-1 lg:h-dvh">
         <img
           src="/images/letter.jpg"
           alt=""
           className="absolute inset-0 size-full object-cover opacity-35"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/70 to-bg/30" />
-        <div className="relative flex min-h-[32rem] items-center justify-center p-6 sm:p-10 lg:min-h-dvh lg:p-12">
+        <div className="relative flex min-h-[18rem] items-center justify-center p-6 sm:p-10 lg:h-full lg:min-h-0 lg:p-12">
           <Letter
             letter={letterTemplates[0]}
             dateLabel="Upon election"
@@ -62,8 +72,8 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         </div>
       </div>
 
-      <div className="flex flex-col justify-center bg-bg px-6 py-16 sm:px-12">
-        <div className="mx-auto w-full max-w-sm">
+      <div className="order-1 flex flex-col justify-center bg-bg px-6 py-16 sm:px-12 lg:order-2">
+        <div className={cn("mx-auto w-full", isJoin ? "max-w-md" : "max-w-sm")}>
           <Link to="/" className="font-display text-3xl text-fg">
             Atrium
           </Link>
@@ -75,8 +85,8 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           </h1>
           <p className="mt-3 text-sm text-muted">
             {isJoin
-              ? "Open an account and receive the welcome correspondence on cream stock."
-              : "Members return to the studio and the letter tray."}
+              ? "A name is required. Everything else is optional — it becomes Counsel’s memory of you."
+              : "Members return to the studio, the desk, and the letter tray."}
           </p>
 
           {authEnabled ? (
@@ -87,7 +97,11 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
                     key={p.providerId}
                     type="button"
                     variant="outline"
-                    onClick={() => void signIn(p.providerId, { callbackURL: "/studio" })}
+                    onClick={() =>
+                      void signIn(p.providerId, {
+                        callbackURL: isJoin ? "/induction" : "/studio",
+                      })
+                    }
                   >
                     Continue with {p.label}
                   </Button>
@@ -102,18 +116,9 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
                 <div className="h-px flex-1 bg-border" />
               </div>
 
-              <form onSubmit={(e) => void onSubmit(e)} className="space-y-4">
+              <form onSubmit={(e) => void onSubmit(e)} className="space-y-5">
                 {isJoin ? (
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Name</Label>
-                    <Input
-                      id="name"
-                      autoComplete="name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="As you wish to be addressed"
-                    />
-                  </div>
+                  <ProfileFields value={profile} onChange={setProfile} nameRequired />
                 ) : null}
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
@@ -149,7 +154,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
             <p className="mt-8 text-sm text-muted">Sign-in is disabled.</p>
           )}
 
-          <p className={cn("mt-8 text-sm text-subtle")}>
+          <p className="mt-8 text-sm text-subtle">
             {isJoin ? (
               <>
                 Already elected?{" "}
