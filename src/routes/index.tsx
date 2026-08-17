@@ -26,18 +26,18 @@ function Home() {
             The private practice of becoming a partner.
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
-            A complete map of the private-equity ladder — work, timeline, and economics — with the
-            six dimensions that separate high performers, and a mastery plan you can actually run.
+            A complete map of the ladder — and a desk that does the work of each seat. Engines
+            compute the numbers. Counsel writes the prose. Neither invents the other.
           </p>
           <div className="mt-10 flex flex-wrap gap-3">
             <Button size="lg" asChild>
-              <Link to="/ladder">
-                Enter the ladder
+              <Link to="/desk">
+                Open the desk
                 <ArrowRight className="size-4" />
               </Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link to="/signup">Request membership</Link>
+              <Link to="/ladder">Read the ladder</Link>
             </Button>
           </div>
         </div>
@@ -79,13 +79,14 @@ function Home() {
             />
           </Reveal>
           <Reveal delay={80}>
-            <p className="text-[11px] uppercase tracking-[0.22em] text-accent">What separates</p>
+            <p className="text-[11px] uppercase tracking-[0.22em] text-accent">The desk</p>
             <h2 className="mt-3 font-display text-4xl text-fg sm:text-5xl">
-              Technical excellence is the door, not the destination.
+              Paper LBOs, IC memos, and a partner in the room.
             </h2>
             <p className="mt-5 text-muted">
-              After the associate years, the scorecard changes. Origination, judgment, portfolio
-              impact, leadership, and domain depth decide who remains.
+              From Helix, Ledger Desk, and ProFX we took the rule that matters: compute in code,
+              let intelligence explain. Attribution, carry, and returns never come from the model’s
+              imagination.
             </p>
             <ol className="mt-8 space-y-4">
               {dimensions.map((d) => (
@@ -118,15 +119,15 @@ function Home() {
               Correspondence, then practice.
             </h2>
             <p className="mt-5 max-w-xl text-muted">
-              Join and you receive three letters on cream stock — election, first assignment, and a
-              precise note on carry. The studio keeps your mastery plan and deal log.
+              Join and you receive three letters on cream stock. The desk keeps your LBOs, memos,
+              and counsel. The studio keeps the seven practices honest.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild>
                 <Link to="/signup">Open an account</Link>
               </Button>
               <Button variant="outline" asChild>
-                <Link to="/mastery">Read the plan</Link>
+                <Link to="/desk">Enter the desk</Link>
               </Button>
             </div>
           </Reveal>

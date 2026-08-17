@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CorrespondenceRouteImport } from './routes/correspondence'
+import { Route as DeskRouteImport } from './routes/desk'
 import { Route as FirmsRouteImport } from './routes/firms'
 import { Route as LadderRouteImport } from './routes/ladder'
 import { Route as LoginRouteImport } from './routes/login'
@@ -31,6 +32,11 @@ const IndexRoute = IndexRouteImport.update({
 const CorrespondenceRoute = CorrespondenceRouteImport.update({
   id: '/correspondence',
   path: '/correspondence',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DeskRoute = DeskRouteImport.update({
+  id: '/desk',
+  path: '/desk',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FirmsRoute = FirmsRouteImport.update({
@@ -92,6 +98,7 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/correspondence': typeof CorrespondenceRouteWithChildren
+  '/desk': typeof DeskRoute
   '/firms': typeof FirmsRoute
   '/ladder': typeof LadderRouteWithChildren
   '/login': typeof LoginRoute
@@ -107,6 +114,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/correspondence': typeof CorrespondenceRouteWithChildren
+  '/desk': typeof DeskRoute
   '/firms': typeof FirmsRoute
   '/ladder': typeof LadderRouteWithChildren
   '/login': typeof LoginRoute
@@ -123,6 +131,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/correspondence': typeof CorrespondenceRouteWithChildren
+  '/desk': typeof DeskRoute
   '/firms': typeof FirmsRoute
   '/ladder': typeof LadderRouteWithChildren
   '/login': typeof LoginRoute
@@ -140,6 +149,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/correspondence'
+    | '/desk'
     | '/firms'
     | '/ladder'
     | '/login'
@@ -155,6 +165,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/correspondence'
+    | '/desk'
     | '/firms'
     | '/ladder'
     | '/login'
@@ -170,6 +181,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/correspondence'
+    | '/desk'
     | '/firms'
     | '/ladder'
     | '/login'
@@ -186,6 +198,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CorrespondenceRoute: typeof CorrespondenceRouteWithChildren
+  DeskRoute: typeof DeskRoute
   FirmsRoute: typeof FirmsRoute
   LadderRoute: typeof LadderRouteWithChildren
   LoginRoute: typeof LoginRoute
@@ -211,6 +224,13 @@ declare module '@tanstack/react-router' {
       path: '/correspondence'
       fullPath: '/correspondence'
       preLoaderRoute: typeof CorrespondenceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/desk': {
+      id: '/desk'
+      path: '/desk'
+      fullPath: '/desk'
+      preLoaderRoute: typeof DeskRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/firms': {
@@ -319,6 +339,7 @@ const LadderRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CorrespondenceRoute: CorrespondenceRouteWithChildren,
+  DeskRoute: DeskRoute,
   FirmsRoute: FirmsRoute,
   LadderRoute: LadderRouteWithChildren,
   LoginRoute: LoginRoute,

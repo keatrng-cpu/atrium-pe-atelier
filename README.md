@@ -1,14 +1,22 @@
 # Atrium
 
-A private curriculum for the private-equity partnership track.
+A private curriculum — and a working desk — for the private-equity partnership track.
 
-The site maps the typical ladder — Analyst through Partner — with responsibilities, promotion windows, cash compensation by firm tier (2025–2026 major US markets), and carry. It also covers the six dimensions that separate high performers, a seven-practice mastery plan, firm-type differences, and the realities of carry, lifestyle, sponsorship, and exit ramps.
+The site maps the typical ladder, compensation, the six dimensions that separate high performers, and a seven-practice mastery plan. The **desk** does the jobs of each seat: paper LBOs, returns attribution, carry waterfalls, IC memos, diligence, KPI packs, sourcing, value-creation plans, and LP letters.
 
-Members can sign in (Google, X, or email) to receive editorial correspondence and keep a studio: target seat, mastery progress, and a personal deal log.
+Numbers are computed in deterministic engines. Counsel (Grok) only explains figures it is given — the same rule as ProFX and Ledger Desk.
+
+## Desk
+
+- Paper LBO: sources & uses, cash sweep, MOIC, IRR, attribution
+- Carry waterfall: preferred, catch-up, promote
+- Rank-aware jobs from Associate through Partner
+- Counsel drafts memos and theses without inventing numbers
+- Library files work to the signed-in member
 
 ## Stack
 
-React 19, TanStack Start, Tailwind v4, Better Auth, Postgres / PGLite.
+React 19, TanStack Start, Tailwind v4, Better Auth, Postgres / PGLite, xAI Grok.
 
 ## Scripts
 

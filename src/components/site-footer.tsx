@@ -12,6 +12,9 @@ export function SiteFooter() {
           </p>
         </div>
         <div className="flex flex-wrap gap-x-6 gap-y-2 text-[11px] uppercase tracking-[0.16em] text-subtle">
+          <Link to="/desk" className="hover:text-fg">
+            Desk
+          </Link>
           <Link to="/ladder" className="hover:text-fg">
             Ladder
           </Link>

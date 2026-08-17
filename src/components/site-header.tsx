@@ -7,12 +7,12 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
 const nav = [
+  { to: "/desk", label: "Desk" },
   { to: "/ladder", label: "The Ladder" },
   { to: "/performers", label: "High Performers" },
   { to: "/mastery", label: "Mastery" },
   { to: "/realities", label: "Realities" },
   { to: "/firms", label: "Firms" },
-  { to: "/studio", label: "Members" },
 ] as const;
 
 export function SiteHeader() {
@@ -91,6 +91,13 @@ export function SiteHeader() {
                 {item.label}
               </Link>
             ))}
+            <Link
+              to="/studio"
+              onClick={() => setOpen(false)}
+              className="flex min-h-11 items-center text-sm uppercase tracking-[0.16em] text-muted hover:text-fg"
+            >
+              Studio
+            </Link>
             <Link
               to="/correspondence"
               onClick={() => setOpen(false)}
