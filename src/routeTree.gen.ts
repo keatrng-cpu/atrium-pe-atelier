@@ -20,6 +20,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as MasteryRouteImport } from './routes/mastery'
 import { Route as PerformersRouteImport } from './routes/performers'
 import { Route as RealitiesRouteImport } from './routes/realities'
+import { Route as ResearchRouteImport } from './routes/research'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as StudioRouteImport } from './routes/studio'
 import { Route as CorrespondenceIdRouteImport } from './routes/correspondence.$id'
@@ -29,6 +30,7 @@ import { Route as HousePortfolioRouteImport } from './routes/house.portfolio'
 import { Route as HouseRoomsRouteImport } from './routes/house.rooms'
 import { Route as HouseSeatsRouteImport } from './routes/house.seats'
 import { Route as LadderRankRouteImport } from './routes/ladder.$rank'
+import { Route as ResearchIdRouteImport } from './routes/research.$id'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as HouseRoomsIdRouteImport } from './routes/house.rooms.$id'
 
@@ -87,6 +89,11 @@ const RealitiesRoute = RealitiesRouteImport.update({
   path: '/realities',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResearchRoute = ResearchRouteImport.update({
+  id: '/research',
+  path: '/research',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -132,6 +139,11 @@ const LadderRankRoute = LadderRankRouteImport.update({
   path: '/$rank',
   getParentRoute: () => LadderRoute,
 } as any)
+const ResearchIdRoute = ResearchIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ResearchRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -155,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/mastery': typeof MasteryRoute
   '/performers': typeof PerformersRoute
   '/realities': typeof RealitiesRoute
+  '/research': typeof ResearchRouteWithChildren
   '/signup': typeof SignupRoute
   '/studio': typeof StudioRoute
   '/correspondence/$id': typeof CorrespondenceIdRoute
@@ -164,6 +177,7 @@ export interface FileRoutesByFullPath {
   '/house/rooms': typeof HouseRoomsRouteWithChildren
   '/house/seats': typeof HouseSeatsRoute
   '/ladder/$rank': typeof LadderRankRoute
+  '/research/$id': typeof ResearchIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/house/rooms/$id': typeof HouseRoomsIdRoute
 }
@@ -179,6 +193,7 @@ export interface FileRoutesByTo {
   '/mastery': typeof MasteryRoute
   '/performers': typeof PerformersRoute
   '/realities': typeof RealitiesRoute
+  '/research': typeof ResearchRouteWithChildren
   '/signup': typeof SignupRoute
   '/studio': typeof StudioRoute
   '/correspondence/$id': typeof CorrespondenceIdRoute
@@ -188,6 +203,7 @@ export interface FileRoutesByTo {
   '/house/rooms': typeof HouseRoomsRouteWithChildren
   '/house/seats': typeof HouseSeatsRoute
   '/ladder/$rank': typeof LadderRankRoute
+  '/research/$id': typeof ResearchIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/house/rooms/$id': typeof HouseRoomsIdRoute
 }
@@ -204,6 +220,7 @@ export interface FileRoutesById {
   '/mastery': typeof MasteryRoute
   '/performers': typeof PerformersRoute
   '/realities': typeof RealitiesRoute
+  '/research': typeof ResearchRouteWithChildren
   '/signup': typeof SignupRoute
   '/studio': typeof StudioRoute
   '/correspondence/$id': typeof CorrespondenceIdRoute
@@ -213,6 +230,7 @@ export interface FileRoutesById {
   '/house/rooms': typeof HouseRoomsRouteWithChildren
   '/house/seats': typeof HouseSeatsRoute
   '/ladder/$rank': typeof LadderRankRoute
+  '/research/$id': typeof ResearchIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/house/rooms/$id': typeof HouseRoomsIdRoute
 }
@@ -230,6 +248,7 @@ export interface FileRouteTypes {
     | '/mastery'
     | '/performers'
     | '/realities'
+    | '/research'
     | '/signup'
     | '/studio'
     | '/correspondence/$id'
@@ -239,6 +258,7 @@ export interface FileRouteTypes {
     | '/house/rooms'
     | '/house/seats'
     | '/ladder/$rank'
+    | '/research/$id'
     | '/api/auth/$'
     | '/house/rooms/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -254,6 +274,7 @@ export interface FileRouteTypes {
     | '/mastery'
     | '/performers'
     | '/realities'
+    | '/research'
     | '/signup'
     | '/studio'
     | '/correspondence/$id'
@@ -263,6 +284,7 @@ export interface FileRouteTypes {
     | '/house/rooms'
     | '/house/seats'
     | '/ladder/$rank'
+    | '/research/$id'
     | '/api/auth/$'
     | '/house/rooms/$id'
   id:
@@ -278,6 +300,7 @@ export interface FileRouteTypes {
     | '/mastery'
     | '/performers'
     | '/realities'
+    | '/research'
     | '/signup'
     | '/studio'
     | '/correspondence/$id'
@@ -287,6 +310,7 @@ export interface FileRouteTypes {
     | '/house/rooms'
     | '/house/seats'
     | '/ladder/$rank'
+    | '/research/$id'
     | '/api/auth/$'
     | '/house/rooms/$id'
   fileRoutesById: FileRoutesById
@@ -303,6 +327,7 @@ export interface RootRouteChildren {
   MasteryRoute: typeof MasteryRoute
   PerformersRoute: typeof PerformersRoute
   RealitiesRoute: typeof RealitiesRoute
+  ResearchRoute: typeof ResearchRouteWithChildren
   SignupRoute: typeof SignupRoute
   StudioRoute: typeof StudioRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -387,6 +412,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RealitiesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/research': {
+      id: '/research'
+      path: '/research'
+      fullPath: '/research'
+      preLoaderRoute: typeof ResearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -449,6 +481,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/ladder/$rank'
       preLoaderRoute: typeof LadderRankRouteImport
       parentRoute: typeof LadderRoute
+    }
+    '/research/$id': {
+      id: '/research/$id'
+      path: '/$id'
+      fullPath: '/research/$id'
+      preLoaderRoute: typeof ResearchIdRouteImport
+      parentRoute: typeof ResearchRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -520,6 +559,18 @@ const LadderRouteChildren: LadderRouteChildren = {
 const LadderRouteWithChildren =
   LadderRoute._addFileChildren(LadderRouteChildren)
 
+interface ResearchRouteChildren {
+  ResearchIdRoute: typeof ResearchIdRoute
+}
+
+const ResearchRouteChildren: ResearchRouteChildren = {
+  ResearchIdRoute: ResearchIdRoute,
+}
+
+const ResearchRouteWithChildren = ResearchRoute._addFileChildren(
+  ResearchRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CorrespondenceRoute: CorrespondenceRouteWithChildren,
@@ -532,6 +583,7 @@ const rootRouteChildren: RootRouteChildren = {
   MasteryRoute: MasteryRoute,
   PerformersRoute: PerformersRoute,
   RealitiesRoute: RealitiesRoute,
+  ResearchRoute: ResearchRouteWithChildren,
   SignupRoute: SignupRoute,
   StudioRoute: StudioRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

@@ -15,6 +15,9 @@ export function SiteFooter() {
           <Link to="/house" className="hover:text-fg">
             House
           </Link>
+          <Link to="/research" className="hover:text-fg">
+            Research
+          </Link>
           <Link to="/desk" className="hover:text-fg">
             Desk
           </Link>

@@ -9,10 +9,10 @@ import { cn } from "@/lib/utils";
 const nav = [
   { to: "/house", label: "House" },
   { to: "/desk", label: "Desk" },
+  { to: "/research", label: "Research" },
   { to: "/ladder", label: "The Ladder" },
   { to: "/performers", label: "High Performers" },
   { to: "/mastery", label: "Mastery" },
-  { to: "/firms", label: "Firms" },
 ] as const;
 
 export function SiteHeader() {
