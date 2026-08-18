@@ -22,6 +22,7 @@ import { Route as PerformersRouteImport } from './routes/performers'
 import { Route as RealitiesRouteImport } from './routes/realities'
 import { Route as ResearchRouteImport } from './routes/research'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as StreetRouteImport } from './routes/street'
 import { Route as StudioRouteImport } from './routes/studio'
 import { Route as CorrespondenceIdRouteImport } from './routes/correspondence.$id'
 import { Route as HouseAlertsRouteImport } from './routes/house.alerts'
@@ -31,6 +32,9 @@ import { Route as HouseRoomsRouteImport } from './routes/house.rooms'
 import { Route as HouseSeatsRouteImport } from './routes/house.seats'
 import { Route as LadderRankRouteImport } from './routes/ladder.$rank'
 import { Route as ResearchIdRouteImport } from './routes/research.$id'
+import { Route as StreetHighlightsRouteImport } from './routes/street.highlights'
+import { Route as StreetQualityRouteImport } from './routes/street.quality'
+import { Route as StreetSpreadRouteImport } from './routes/street.spread'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as HouseRoomsIdRouteImport } from './routes/house.rooms.$id'
 
@@ -99,6 +103,11 @@ const SignupRoute = SignupRouteImport.update({
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StreetRoute = StreetRouteImport.update({
+  id: '/street',
+  path: '/street',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StudioRoute = StudioRouteImport.update({
   id: '/studio',
   path: '/studio',
@@ -144,6 +153,21 @@ const ResearchIdRoute = ResearchIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => ResearchRoute,
 } as any)
+const StreetHighlightsRoute = StreetHighlightsRouteImport.update({
+  id: '/highlights',
+  path: '/highlights',
+  getParentRoute: () => StreetRoute,
+} as any)
+const StreetQualityRoute = StreetQualityRouteImport.update({
+  id: '/quality',
+  path: '/quality',
+  getParentRoute: () => StreetRoute,
+} as any)
+const StreetSpreadRoute = StreetSpreadRouteImport.update({
+  id: '/spread',
+  path: '/spread',
+  getParentRoute: () => StreetRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -169,6 +193,7 @@ export interface FileRoutesByFullPath {
   '/realities': typeof RealitiesRoute
   '/research': typeof ResearchRouteWithChildren
   '/signup': typeof SignupRoute
+  '/street': typeof StreetRouteWithChildren
   '/studio': typeof StudioRoute
   '/correspondence/$id': typeof CorrespondenceIdRoute
   '/house/alerts': typeof HouseAlertsRoute
@@ -178,6 +203,9 @@ export interface FileRoutesByFullPath {
   '/house/seats': typeof HouseSeatsRoute
   '/ladder/$rank': typeof LadderRankRoute
   '/research/$id': typeof ResearchIdRoute
+  '/street/highlights': typeof StreetHighlightsRoute
+  '/street/quality': typeof StreetQualityRoute
+  '/street/spread': typeof StreetSpreadRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/house/rooms/$id': typeof HouseRoomsIdRoute
 }
@@ -195,6 +223,7 @@ export interface FileRoutesByTo {
   '/realities': typeof RealitiesRoute
   '/research': typeof ResearchRouteWithChildren
   '/signup': typeof SignupRoute
+  '/street': typeof StreetRouteWithChildren
   '/studio': typeof StudioRoute
   '/correspondence/$id': typeof CorrespondenceIdRoute
   '/house/alerts': typeof HouseAlertsRoute
@@ -204,6 +233,9 @@ export interface FileRoutesByTo {
   '/house/seats': typeof HouseSeatsRoute
   '/ladder/$rank': typeof LadderRankRoute
   '/research/$id': typeof ResearchIdRoute
+  '/street/highlights': typeof StreetHighlightsRoute
+  '/street/quality': typeof StreetQualityRoute
+  '/street/spread': typeof StreetSpreadRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/house/rooms/$id': typeof HouseRoomsIdRoute
 }
@@ -222,6 +254,7 @@ export interface FileRoutesById {
   '/realities': typeof RealitiesRoute
   '/research': typeof ResearchRouteWithChildren
   '/signup': typeof SignupRoute
+  '/street': typeof StreetRouteWithChildren
   '/studio': typeof StudioRoute
   '/correspondence/$id': typeof CorrespondenceIdRoute
   '/house/alerts': typeof HouseAlertsRoute
@@ -231,6 +264,9 @@ export interface FileRoutesById {
   '/house/seats': typeof HouseSeatsRoute
   '/ladder/$rank': typeof LadderRankRoute
   '/research/$id': typeof ResearchIdRoute
+  '/street/highlights': typeof StreetHighlightsRoute
+  '/street/quality': typeof StreetQualityRoute
+  '/street/spread': typeof StreetSpreadRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/house/rooms/$id': typeof HouseRoomsIdRoute
 }
@@ -250,6 +286,7 @@ export interface FileRouteTypes {
     | '/realities'
     | '/research'
     | '/signup'
+    | '/street'
     | '/studio'
     | '/correspondence/$id'
     | '/house/alerts'
@@ -259,6 +296,9 @@ export interface FileRouteTypes {
     | '/house/seats'
     | '/ladder/$rank'
     | '/research/$id'
+    | '/street/highlights'
+    | '/street/quality'
+    | '/street/spread'
     | '/api/auth/$'
     | '/house/rooms/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -276,6 +316,7 @@ export interface FileRouteTypes {
     | '/realities'
     | '/research'
     | '/signup'
+    | '/street'
     | '/studio'
     | '/correspondence/$id'
     | '/house/alerts'
@@ -285,6 +326,9 @@ export interface FileRouteTypes {
     | '/house/seats'
     | '/ladder/$rank'
     | '/research/$id'
+    | '/street/highlights'
+    | '/street/quality'
+    | '/street/spread'
     | '/api/auth/$'
     | '/house/rooms/$id'
   id:
@@ -302,6 +346,7 @@ export interface FileRouteTypes {
     | '/realities'
     | '/research'
     | '/signup'
+    | '/street'
     | '/studio'
     | '/correspondence/$id'
     | '/house/alerts'
@@ -311,6 +356,9 @@ export interface FileRouteTypes {
     | '/house/seats'
     | '/ladder/$rank'
     | '/research/$id'
+    | '/street/highlights'
+    | '/street/quality'
+    | '/street/spread'
     | '/api/auth/$'
     | '/house/rooms/$id'
   fileRoutesById: FileRoutesById
@@ -329,6 +377,7 @@ export interface RootRouteChildren {
   RealitiesRoute: typeof RealitiesRoute
   ResearchRoute: typeof ResearchRouteWithChildren
   SignupRoute: typeof SignupRoute
+  StreetRoute: typeof StreetRouteWithChildren
   StudioRoute: typeof StudioRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
@@ -426,6 +475,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/street': {
+      id: '/street'
+      path: '/street'
+      fullPath: '/street'
+      preLoaderRoute: typeof StreetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/studio': {
       id: '/studio'
       path: '/studio'
@@ -488,6 +544,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/research/$id'
       preLoaderRoute: typeof ResearchIdRouteImport
       parentRoute: typeof ResearchRoute
+    }
+    '/street/highlights': {
+      id: '/street/highlights'
+      path: '/highlights'
+      fullPath: '/street/highlights'
+      preLoaderRoute: typeof StreetHighlightsRouteImport
+      parentRoute: typeof StreetRoute
+    }
+    '/street/quality': {
+      id: '/street/quality'
+      path: '/quality'
+      fullPath: '/street/quality'
+      preLoaderRoute: typeof StreetQualityRouteImport
+      parentRoute: typeof StreetRoute
+    }
+    '/street/spread': {
+      id: '/street/spread'
+      path: '/spread'
+      fullPath: '/street/spread'
+      preLoaderRoute: typeof StreetSpreadRouteImport
+      parentRoute: typeof StreetRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -571,6 +648,21 @@ const ResearchRouteWithChildren = ResearchRoute._addFileChildren(
   ResearchRouteChildren,
 )
 
+interface StreetRouteChildren {
+  StreetHighlightsRoute: typeof StreetHighlightsRoute
+  StreetQualityRoute: typeof StreetQualityRoute
+  StreetSpreadRoute: typeof StreetSpreadRoute
+}
+
+const StreetRouteChildren: StreetRouteChildren = {
+  StreetHighlightsRoute: StreetHighlightsRoute,
+  StreetQualityRoute: StreetQualityRoute,
+  StreetSpreadRoute: StreetSpreadRoute,
+}
+
+const StreetRouteWithChildren =
+  StreetRoute._addFileChildren(StreetRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CorrespondenceRoute: CorrespondenceRouteWithChildren,
@@ -585,6 +677,7 @@ const rootRouteChildren: RootRouteChildren = {
   RealitiesRoute: RealitiesRoute,
   ResearchRoute: ResearchRouteWithChildren,
   SignupRoute: SignupRoute,
+  StreetRoute: StreetRouteWithChildren,
   StudioRoute: StudioRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }

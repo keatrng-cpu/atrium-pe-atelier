@@ -4,6 +4,10 @@ export type JobKind =
   | "lbo"
   | "attribution"
   | "carry"
+  | "comps"
+  | "dcf"
+  | "merger"
+  | "quality"
   | "thesis"
   | "memo"
   | "diligence"
@@ -46,6 +50,38 @@ export const jobs: Job[] = [
     engine: "numbers",
     brief: "Preferred return, optional GP catch-up, and promote. Model timing, not just points.",
     promptHint: "",
+  },
+  {
+    id: "comps",
+    title: "Trading & deal comps",
+    ranks: ["analyst", "senior-associate", "vice-president"],
+    engine: "both",
+    brief: "Spread peers and precedents. EV, multiples, median and percentiles, implied value of the target. You type the filings. The engine multiplies.",
+    promptHint: "Narrate this trading-and-precedent book as a soccer-field exhibit. Do not invent a number.",
+  },
+  {
+    id: "dcf",
+    title: "DCF",
+    ranks: ["analyst", "senior-associate", "vice-president"],
+    engine: "both",
+    brief: "UFCF, WACC, Gordon and exit terminals, sensitivity. Intrinsic value from the cash you actually model.",
+    promptHint: "Write the DCF exhibit. Do not invent a number.",
+  },
+  {
+    id: "merger",
+    title: "Merger model",
+    ranks: ["analyst", "senior-associate", "vice-president"],
+    engine: "both",
+    brief: "Accretion and dilution. Cash is new debt. Stock is new shares. Synergies after tax.",
+    promptHint: "Write the accretion/dilution exhibit. Name the drivers. Do not invent a number.",
+  },
+  {
+    id: "quality",
+    title: "Quality score",
+    ranks: ["analyst", "senior-associate", "vice-president", "principal"],
+    engine: "both",
+    brief: "Nine dimensions that separate a premium multiple from a discount. The mean is a label, not a price.",
+    promptHint: "Write the quality exhibit. Tie each claim to the score. Do not invent a multiple.",
   },
   {
     id: "thesis",

@@ -37,7 +37,7 @@ function Home() {
               </Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link to="/ladder">Read the ladder</Link>
+              <Link to="/street">The street</Link>
             </Button>
           </div>
         </div>

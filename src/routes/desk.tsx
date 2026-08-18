@@ -6,6 +6,10 @@ import { Button } from "@/components/ui/button";
 import { BriefBox } from "@/components/desk/fields";
 import { LboPanel } from "@/components/desk/lbo-panel";
 import { CarryPanel } from "@/components/desk/carry-panel";
+import { CompsPanel } from "@/components/desk/comps-panel";
+import { DcfPanel } from "@/components/desk/dcf-panel";
+import { MergerPanel } from "@/components/desk/merger-panel";
+import { QualityPanel } from "@/components/desk/quality-panel";
 import { DraftPanel } from "@/components/desk/draft-panel";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { askCounsel, type CounselMessage } from "@/lib/server/counsel";
@@ -182,6 +186,34 @@ function DeskPage() {
                 />
               ) : kind === "carry" ? (
                 <CarryPanel />
+              ) : kind === "comps" ? (
+                <CompsPanel
+                  onSendToCounsel={(block, prompt) => {
+                    setComputed(block);
+                    void runCounsel(prompt, block);
+                  }}
+                />
+              ) : kind === "dcf" ? (
+                <DcfPanel
+                  onSendToCounsel={(block, prompt) => {
+                    setComputed(block);
+                    void runCounsel(prompt, block);
+                  }}
+                />
+              ) : kind === "merger" ? (
+                <MergerPanel
+                  onSendToCounsel={(block, prompt) => {
+                    setComputed(block);
+                    void runCounsel(prompt, block);
+                  }}
+                />
+              ) : kind === "quality" ? (
+                <QualityPanel
+                  onSendToCounsel={(block, prompt) => {
+                    setComputed(block);
+                    void runCounsel(prompt, block);
+                  }}
+                />
               ) : kind === "counsel" ? (
                 <div className="space-y-4">
                   <p className="text-sm text-muted">{job.brief}</p>

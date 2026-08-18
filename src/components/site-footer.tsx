@@ -18,6 +18,9 @@ export function SiteFooter() {
           <Link to="/research" className="hover:text-fg">
             Research
           </Link>
+          <Link to="/street" className="hover:text-fg">
+            Street
+          </Link>
           <Link to="/desk" className="hover:text-fg">
             Desk
           </Link>
