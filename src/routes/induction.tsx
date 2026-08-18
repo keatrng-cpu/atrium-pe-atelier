@@ -34,7 +34,7 @@ function InductionPage() {
         });
         setReady(true);
       });
-  }, [isPending, user]);
+  }, [isPending, user?.id]);
 
   if (isPending || (user && !ready)) {
     return (

@@ -28,7 +28,7 @@ function CorrespondencePage() {
     return () => {
       cancelled = true;
     };
-  }, [isPending, user]);
+  }, [isPending, user?.id]);
 
   if (isPending) {
     return (

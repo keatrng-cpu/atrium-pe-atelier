@@ -28,7 +28,7 @@ function ResearchPage() {
     listBriefs()
       .then(setBriefs)
       .catch(() => setBriefs([]));
-  }, [isPending, user]);
+  }, [isPending, user?.id]);
 
   if (isPending) {
     return (

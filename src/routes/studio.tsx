@@ -59,7 +59,7 @@ function StudioPage() {
     return () => {
       cancelled = true;
     };
-  }, [isPending, user]);
+  }, [isPending, user?.id]);
 
   if (isPending || (user && !ready)) {
     return (
@@ -226,11 +226,14 @@ function StudioPage() {
                         key={s.id}
                         type="button"
                         onClick={() =>
-                          setSkills((prev) =>
-                            prev.map((p) =>
-                              p.skillId === skill.id ? { ...p, status: s.id } : p,
-                            ),
-                          )
+                          setSkills((prev) => {
+                            const next = prev.some((p) => p.skillId === skill.id)
+                              ? prev.map((p) =>
+                                  p.skillId === skill.id ? { ...p, status: s.id } : p,
+                                )
+                              : [...prev, { skillId: skill.id, status: s.id, notes: "" }];
+                            return next;
+                          })
                         }
                         className={cn(
                           "h-9 rounded-full px-3 text-[10px] uppercase tracking-[0.12em] transition-colors duration-150",

@@ -53,7 +53,7 @@ function DeskPage() {
         if (p.jobLevel) setRank(rankFromProfile(p.jobLevel));
       })
       .catch(() => undefined);
-  }, [isPending, user]);
+  }, [isPending, user?.id]);
 
   if (isPending) {
     return (
