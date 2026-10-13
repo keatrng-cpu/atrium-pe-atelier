@@ -11,9 +11,16 @@ dist
 !.env.example
 artifacts
 screenshots
-.grok
+.grok/*
 AGENTS.md
 AGENTS.project.md
 /tmp
 .DS_Store
 attachments/
+ai/.sessions.log
+graphify-out/.post-commit.log
+ai/.context.md
+ai/.context.md.tmp
+# auto-memory: keep these tracked
+!.grok/GROK.md
+!AGENTS.md
