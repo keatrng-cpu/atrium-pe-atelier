@@ -17,3 +17,5 @@ AGENTS.project.md
 /tmp
 .DS_Store
 attachments/
+ai/.sessions.log
+graphify-out/.post-commit.log
